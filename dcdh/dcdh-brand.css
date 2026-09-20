@@ -1,0 +1,144 @@
+/*
+ * DCDH structural overrides
+ *
+ * The Durham CSS framework is unlayered and therefore outranks Tailwind's
+ * @layer utilities in the cascade. This file (also unlayered) patches the
+ * specific Durham rules that break the DCDH layout.
+ */
+
+/* ── Font: silence Durham's missing Open Sans @font-face 404s ────────────── */
+/* Durham CSS declares @font-face rules pointing to /fonts/open-sans-*.woff2  */
+/* which do not exist. Re-declare "Open Sans" to point to nowhere so the      */
+/* browser stops making 404 requests. Inter (loaded via <link> in Layout)     */
+/* is set as the primary family below and takes effect instead.               */
+@font-face { font-family: "Open Sans"; font-style: normal; font-weight: 300; src: local("Open Sans Light"); font-display: swap; }
+@font-face { font-family: "Open Sans"; font-style: normal; font-weight: 400; src: local("Open Sans"); font-display: swap; }
+@font-face { font-family: "Open Sans"; font-style: italic; font-weight: 400; src: local("Open Sans Italic"); font-display: swap; }
+@font-face { font-family: "Open Sans"; font-style: normal; font-weight: 600; src: local("Open Sans SemiBold"); font-display: swap; }
+@font-face { font-family: "Open Sans"; font-style: italic; font-weight: 600; src: local("Open Sans SemiBold Italic"); font-display: swap; }
+@font-face { font-family: "Open Sans"; font-style: normal; font-weight: 700; src: local("Open Sans Bold"); font-display: swap; }
+@font-face { font-family: "Open Sans"; font-style: italic; font-weight: 700; src: local("Open Sans Bold Italic"); font-display: swap; }
+@font-face { font-family: "Open Sans"; font-style: normal; font-weight: 800; src: local("Open Sans ExtraBold"); font-display: swap; }
+
+/* ── Font: apply Inter as the site body font ─────────────────────────────── */
+/* Durham CSS body rule is unlayered and wins over Tailwind @layer base,      */
+/* so we override it here (also unlayered, later in load order).              */
+html, body {
+  font-family: "Inter", system-ui, "Segoe UI", Arial, sans-serif;
+}
+
+/* ── Images: restore explicit heights on elements that need them ─────────── */
+/* Durham CSS: `img { height: auto }` overrides Tailwind h-* utilities.       */
+/* Use a targeted class for any image that requires a fixed rendered height.  */
+.site-header-logo {
+  height: 2.25rem !important; /* 36px */
+  width: auto !important;
+}
+
+
+/* ── Hero heading: 'for' in purple italic — matches the DCDH logo treatment ── */
+.hero-title__for {
+  font-style: italic;
+  color: #c87ed0 !important; /* lighter purple so it reads on the dark hero bg */
+  font-weight: 700;
+}
+
+/* ── Hero heading: Playfair Display for display-size h1 in page headers ──── */
+/* body is Inter; this explicitly sets the large hero h1 to the serif display  */
+/* font, giving it the gravitas of the original Open Sans treatment.           */
+.dcdh-page-header .page-header__heading {
+  font-family: "Playfair Display", Georgia, serif !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.01em !important;
+  max-width: 12ch !important;
+}
+
+/* ── Hero intro text: keep Inter, not Open Sans fallback chain ─────────────  */
+/* u-font-sans has !important forcing Open Sans → system-ui; we override back. */
+.dcdh-page-header .u-text-h5.u-font-sans {
+  font-family: "Inter", system-ui, "Segoe UI", Arial, sans-serif !important;
+  font-weight: 500 !important;
+}
+
+
+.dcdh-page-header .page-header--picture {
+  mix-blend-mode: normal !important;
+}
+.dcdh-page-header .page-header--picture img {
+  opacity: 0.18 !important;
+}
+
+/* Card images must fill their wrap */
+.dcdh-card__img {
+  height: 100% !important;
+}
+
+/* ── Buttons: move unlayered so they win over Durham's @layer utilities ───── */
+.du-btn-primary,
+.du-btn-secondary,
+.du-btn-outline-white {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.55rem !important;
+  padding: 0.75rem 1.15rem !important;
+  font-size: 0.875rem !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  text-decoration: none !important;
+  white-space: nowrap !important;
+  border: 2px solid transparent !important;
+}
+
+.du-btn-primary {
+  background: #68246d !important;
+  border-color: #68246d !important;
+  color: #fff !important;
+}
+
+.du-btn-primary:hover {
+  background: #531d57 !important;
+  border-color: #531d57 !important;
+  color: #fff !important;
+}
+
+.du-btn-secondary {
+  background: transparent !important;
+  border-color: #68246d !important;
+  color: #68246d !important;
+}
+
+.du-btn-secondary:hover {
+  background: #68246d !important;
+  color: #fff !important;
+}
+
+.du-btn-outline-white {
+  background: transparent !important;
+  border-color: rgba(255,255,255,0.85) !important;
+  color: #fff !important;
+}
+
+.du-btn-outline-white:hover {
+  background: #fff !important;
+  border-color: #fff !important;
+  color: #68246d !important;
+}
+
+/* ── Focus ring: keep Durham purple ─────────────────────────────────────── */
+:focus,
+button:focus {
+  box-shadow: 0 0 0 2px #fff, 0 0 0 5px #68246d, 0 0 0 7px #fff !important;
+}
+
+/* ── has-dark-bg headings/paragraphs: inherit white from parent ─────────── */
+/* Our @layer base sets h1-h6 { color: du-ink } which overrides inheritance.  */
+/* This unlayered rule restores inheritance inside dark-background sections.  */
+.has-dark-bg h1,
+.has-dark-bg h2,
+.has-dark-bg h3,
+.has-dark-bg h4,
+.has-dark-bg h5,
+.has-dark-bg h6,
+.has-dark-bg p {
+  color: inherit;
+}

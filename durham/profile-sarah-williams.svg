@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-labelledby="title desc">
+  <title id="title">Portrait avatar for Dr. Sarah Williams</title>
+  <desc id="desc">Abstract profile image with initials SW.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0f766e"/>
+      <stop offset="100%" stop-color="#1d3557"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="400" rx="48" fill="url(#bg)"/>
+  <circle cx="200" cy="148" r="86" fill="#d6fff7" opacity="0.16"/>
+  <circle cx="200" cy="154" r="72" fill="#ffffff" opacity="0.16"/>
+  <text x="200" y="246" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="108" font-weight="700" fill="#ffffff">SW</text>
+</svg>

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-labelledby="title desc">
+  <title id="title">Portrait avatar for Prof. Jane Harrington</title>
+  <desc id="desc">Abstract profile image with initials JH.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#4d1f7a"/>
+      <stop offset="100%" stop-color="#0c1324"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="400" rx="48" fill="url(#bg)"/>
+  <circle cx="200" cy="148" r="86" fill="#f5d7ff" opacity="0.18"/>
+  <circle cx="200" cy="154" r="72" fill="#ffffff" opacity="0.18"/>
+  <text x="200" y="246" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="108" font-weight="700" fill="#ffffff">JH</text>
+</svg>

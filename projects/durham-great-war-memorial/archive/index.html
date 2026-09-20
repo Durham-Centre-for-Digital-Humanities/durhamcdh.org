@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Durham University Alumni in the Great War: A Memorial Database</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:   #1a2744;
+      --gold:   #c8922a;
+      --gold-lt:#f5e6cc;
+      --bg:     #f8f7f4;
+      --panel:  #ffffff;
+      --border: #d8d4c8;
+      --text:   #1f1e1b;
+      --muted:  #5c5848;
+      --radius: 4px;
+    }
+
+    body {
+      font-family: Georgia, 'Times New Roman', serif;
+      font-size: 16px;
+      line-height: 1.7;
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    /* ── Header ── */
+    header {
+      background: var(--navy);
+      color: #fff;
+      padding: 0;
+    }
+    .header-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 28px 24px 24px;
+    }
+    .header-inner h1 {
+      font-size: clamp(1.2rem, 3vw, 1.75rem);
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      line-height: 1.25;
+      margin-bottom: 6px;
+    }
+    .header-inner p {
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.65);
+      font-style: italic;
+      font-family: 'Arial', sans-serif;
+    }
+    .header-bar {
+      background: var(--gold);
+      height: 4px;
+    }
+
+    /* ── Archive notice ── */
+    .archive-notice {
+      background: var(--gold-lt);
+      border-bottom: 1px solid #d4b87a;
+      padding: 10px 24px;
+      font-family: Arial, sans-serif;
+      font-size: 0.8rem;
+      color: #5a4010;
+      text-align: center;
+    }
+    .archive-notice a { color: #3a2a08; font-weight: bold; }
+
+    /* ── Layout ── */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ── About section ── */
+    .about {
+      padding: 32px 0 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    .about h2 {
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      font-family: Arial, sans-serif;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .about p {
+      max-width: 780px;
+      font-size: 0.95rem;
+      color: var(--muted);
+    }
+
+    /* ── Stats bar ── */
+    .stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0;
+      border: 1px solid var(--border);
+      background: var(--panel);
+      margin: 24px 0;
+      font-family: Arial, sans-serif;
+    }
+    .stat-item {
+      flex: 1;
+      min-width: 120px;
+      padding: 14px 20px;
+      border-right: 1px solid var(--border);
+    }
+    .stat-item:last-child { border-right: none; }
+    .stat-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      margin-bottom: 2px;
+    }
+    .stat-value {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--navy);
+    }
+
+    /* ── Controls ── */
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: flex-end;
+      margin: 24px 0 16px;
+      font-family: Arial, sans-serif;
+    }
+    .control-group { display: flex; flex-direction: column; gap: 4px; }
+    .control-group label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      font-weight: 700;
+    }
+    input[type="search"], select {
+      border: 1px solid var(--border);
+      background: var(--panel);
+      padding: 8px 12px;
+      font-size: 0.9rem;
+      font-family: Arial, sans-serif;
+      color: var(--text);
+      border-radius: var(--radius);
+      outline: none;
+    }
+    input[type="search"] { min-width: 220px; }
+    input[type="search"]:focus, select:focus { border-color: var(--navy); }
+    #result-count {
+      margin-left: auto;
+      align-self: flex-end;
+      font-size: 0.82rem;
+      color: var(--muted);
+      padding-bottom: 8px;
+    }
+
+    /* ── Table ── */
+    .table-wrap { overflow-x: auto; margin-bottom: 40px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: Arial, sans-serif;
+      font-size: 0.83rem;
+      background: var(--panel);
+      border: 1px solid var(--border);
+    }
+    thead th {
+      background: var(--navy);
+      color: #fff;
+      padding: 10px 12px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 0.76rem;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+      cursor: pointer;
+      user-select: none;
+    }
+    thead th:hover { background: #243460; }
+    thead th .sort-arrow { margin-left: 4px; opacity: 0.5; }
+    thead th.sorted .sort-arrow { opacity: 1; }
+
+    tbody tr { border-bottom: 1px solid var(--border); cursor: pointer; }
+    tbody tr:hover { background: #f0ede5; }
+    tbody tr.selected { background: var(--gold-lt); }
+    tbody td {
+      padding: 9px 12px;
+      vertical-align: top;
+      line-height: 1.4;
+    }
+    tbody td:first-child { font-weight: 600; color: var(--navy); }
+    .badge {
+      display: inline-block;
+      background: var(--navy);
+      color: #fff;
+      font-size: 0.68rem;
+      padding: 1px 7px;
+      border-radius: 20px;
+      letter-spacing: 0.03em;
+      white-space: nowrap;
+    }
+
+    /* ── Detail panel ── */
+    #detail-panel {
+      display: none;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--gold);
+      padding: 24px 28px;
+      margin-bottom: 40px;
+      font-family: Arial, sans-serif;
+    }
+    #detail-panel h3 {
+      font-family: Georgia, serif;
+      font-size: 1.3rem;
+      color: var(--navy);
+      margin-bottom: 4px;
+    }
+    #detail-panel .detail-sub {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px 24px;
+      margin-bottom: 16px;
+    }
+    .detail-field dt {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      font-weight: 700;
+      margin-bottom: 1px;
+    }
+    .detail-field dd {
+      font-size: 0.9rem;
+      color: var(--text);
+    }
+    .detail-notes {
+      border-top: 1px solid var(--border);
+      padding-top: 14px;
+      margin-top: 4px;
+    }
+    .detail-notes dt {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .detail-notes dd { font-size: 0.9rem; line-height: 1.6; font-family: Georgia, serif; }
+    .close-btn {
+      float: right;
+      background: none;
+      border: 1px solid var(--border);
+      padding: 3px 10px;
+      font-size: 0.78rem;
+      cursor: pointer;
+      color: var(--muted);
+      font-family: Arial, sans-serif;
+      border-radius: var(--radius);
+    }
+    .close-btn:hover { background: #eee; }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--border);
+      background: var(--panel);
+      padding: 20px 24px;
+      font-family: Arial, sans-serif;
+      font-size: 0.78rem;
+      color: var(--muted);
+      text-align: center;
+    }
+    footer a { color: var(--navy); }
+
+    @media (max-width: 640px) {
+      .controls { flex-direction: column; }
+      #result-count { margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="archive-notice">
+  Archived project &mdash; hosted by the <a href="/projects/durham-great-war-memorial/">Durham Centre for Digital Humanities</a>.
+  Original project completed June 2024 by Sarah Chen, MA Digital Humanities.
+  <a href="/projects/durham-great-war-memorial/data/records.json" download>Download data (JSON)</a>
+</div>
+
+<header>
+  <div class="header-inner">
+    <h1>Durham University Alumni in the Great War</h1>
+    <p>A Memorial Database &mdash; Durham University War Memorial Register, Palace Green Library</p>
+  </div>
+  <div class="header-bar"></div>
+</header>
+
+<main class="container">
+
+  <section class="about">
+    <h2>About this project</h2>
+    <p>
+      This database records Durham University alumni who died during the First World War, 1914&ndash;1918.
+      Records are drawn from the Durham University War Memorial Register (Palace Green Library, Special Collections),
+      verified against the Commonwealth War Graves Commission Debt of Honour Register and the
+      <em>Soldiers Died in the Great War</em> dataset. The full database contains 147 records;
+      this archived version displays a sample of 50.
+    </p>
+  </section>
+
+  <div class="stats" id="stats-bar">
+    <div class="stat-item">
+      <div class="stat-label">Records shown</div>
+      <div class="stat-value" id="stat-shown">50</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-label">Full dataset</div>
+      <div class="stat-value">147</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-label">Date range</div>
+      <div class="stat-value">1914&ndash;18</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-label">Colleges</div>
+      <div class="stat-value" id="stat-colleges">3</div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <div class="control-group">
+      <label for="search">Search</label>
+      <input type="search" id="search" placeholder="Name, regiment, place&hellip;" />
+    </div>
+    <div class="control-group">
+      <label for="filter-college">College</label>
+      <select id="filter-college">
+        <option value="">All colleges</option>
+      </select>
+    </div>
+    <div class="control-group">
+      <label for="filter-year">Year of death</label>
+      <select id="filter-year">
+        <option value="">All years</option>
+      </select>
+    </div>
+    <span id="result-count"></span>
+  </div>
+
+  <div id="detail-panel" role="region" aria-label="Record detail">
+    <button class="close-btn" id="close-detail">Close &times;</button>
+    <h3 id="dp-name"></h3>
+    <p class="detail-sub" id="dp-sub"></p>
+    <dl class="detail-grid" id="dp-grid"></dl>
+    <dl class="detail-notes"><dt>Biographical notes</dt><dd id="dp-notes"></dd></dl>
+  </div>
+
+  <div class="table-wrap">
+    <table id="records-table" aria-label="Memorial database">
+      <thead>
+        <tr>
+          <th data-col="surname">Surname <span class="sort-arrow">&#9650;</span></th>
+          <th data-col="forenames">Forenames <span class="sort-arrow">&#9650;</span></th>
+          <th data-col="college">College <span class="sort-arrow">&#9650;</span></th>
+          <th data-col="rank">Rank <span class="sort-arrow">&#9650;</span></th>
+          <th data-col="regiment">Regiment <span class="sort-arrow">&#9650;</span></th>
+          <th data-col="date_of_death">Date of death <span class="sort-arrow">&#9650;</span></th>
+          <th data-col="place_of_death">Place <span class="sort-arrow">&#9650;</span></th>
+        </tr>
+      </thead>
+      <tbody id="records-body"></tbody>
+    </table>
+  </div>
+
+</main>
+
+<footer>
+  <p>
+    Created by Sarah Chen &middot; MA Digital Humanities, Durham University, 2024 &middot;
+    Supervised by Dr Richard Pears &middot;
+    Data: <a href="/projects/durham-great-war-memorial/data/records.json" download>Download JSON</a> &middot;
+    <a href="/projects/durham-great-war-memorial/">Back to project record</a>
+  </p>
+</footer>
+
+<script>
+(function() {
+  let allRecords = [];
+  let sortCol = 'surname';
+  let sortAsc = true;
+  let selectedId = null;
+
+  const tbody = document.getElementById('records-body');
+  const searchEl = document.getElementById('search');
+  const filterCollege = document.getElementById('filter-college');
+  const filterYear = document.getElementById('filter-year');
+  const resultCount = document.getElementById('result-count');
+  const statShown = document.getElementById('stat-shown');
+  const detailPanel = document.getElementById('detail-panel');
+
+  function formatDate(d) {
+    if (!d) return '';
+    const [y, m, day] = d.split('-');
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    return `${parseInt(day, 10)} ${months[parseInt(m,10)-1]} ${y}`;
+  }
+
+  function getYear(d) { return d ? d.split('-')[0] : ''; }
+
+  function buildFilters(records) {
+    const colleges = [...new Set(records.map(r => r.college))].sort();
+    const years    = [...new Set(records.map(r => getYear(r.date_of_death)).filter(Boolean))].sort();
+    colleges.forEach(c => {
+      const o = document.createElement('option');
+      o.value = o.textContent = c;
+      filterCollege.appendChild(o);
+    });
+    years.forEach(y => {
+      const o = document.createElement('option');
+      o.value = o.textContent = y;
+      filterYear.appendChild(o);
+    });
+    document.getElementById('stat-colleges').textContent = colleges.length;
+  }
+
+  function filtered() {
+    const q = searchEl.value.toLowerCase();
+    const col = filterCollege.value;
+    const yr  = filterYear.value;
+    return allRecords.filter(r => {
+      const text = [r.surname, r.forenames, r.regiment, r.place_of_death, r.memorial, r.notes].join(' ').toLowerCase();
+      return (!q || text.includes(q))
+          && (!col || r.college === col)
+          && (!yr  || getYear(r.date_of_death) === yr);
+    });
+  }
+
+  function sorted(records) {
+    return [...records].sort((a, b) => {
+      const av = (a[sortCol] ?? '').toString().toLowerCase();
+      const bv = (b[sortCol] ?? '').toString().toLowerCase();
+      return sortAsc ? av.localeCompare(bv) : bv.localeCompare(av);
+    });
+  }
+
+  function render() {
+    const rows = sorted(filtered());
+    statShown.textContent = rows.length;
+    resultCount.textContent = rows.length === allRecords.length
+      ? `${rows.length} records`
+      : `${rows.length} of ${allRecords.length} records`;
+
+    tbody.innerHTML = '';
+    rows.forEach(r => {
+      const tr = document.createElement('tr');
+      if (r.id === selectedId) tr.classList.add('selected');
+      tr.dataset.id = r.id;
+      tr.innerHTML = `
+        <td>${r.surname}</td>
+        <td>${r.forenames}</td>
+        <td>${r.college}</td>
+        <td><span class="badge">${r.rank}</span></td>
+        <td>${r.regiment}</td>
+        <td>${formatDate(r.date_of_death)}</td>
+        <td>${r.place_of_death}</td>
+      `;
+      tr.addEventListener('click', () => showDetail(r));
+      tbody.appendChild(tr);
+    });
+  }
+
+  function showDetail(r) {
+    selectedId = r.id;
+    render();
+
+    document.getElementById('dp-name').textContent = `${r.forenames} ${r.surname}`;
+    document.getElementById('dp-sub').textContent =
+      `${r.college} · Matriculated ${r.matriculation_year} · ${r.rank}, ${r.regiment}`;
+    document.getElementById('dp-notes').textContent = r.notes;
+
+    const grid = document.getElementById('dp-grid');
+    const fields = [
+      ['College', r.college],
+      ['Matriculation', r.matriculation_year],
+      ['Rank', r.rank],
+      ['Regiment', r.regiment],
+      ['Date of death', formatDate(r.date_of_death)],
+      ['Place', r.place_of_death],
+      ['Memorial', r.memorial],
+    ];
+    grid.innerHTML = fields.map(([label, val]) =>
+      `<div class="detail-field"><dt>${label}</dt><dd>${val}</dd></div>`
+    ).join('');
+    if (r.wikidata_id) {
+      const wd = document.createElement('div');
+      wd.className = 'detail-field';
+      wd.innerHTML = `<dt>Wikidata</dt><dd><a href="https://www.wikidata.org/wiki/${r.wikidata_id}" target="_blank" rel="noopener noreferrer">${r.wikidata_id} ↗</a></dd>`;
+      grid.appendChild(wd);
+    }
+
+    detailPanel.style.display = 'block';
+    detailPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  document.getElementById('close-detail').addEventListener('click', () => {
+    selectedId = null;
+    detailPanel.style.display = 'none';
+    render();
+  });
+
+  // Sorting
+  document.querySelectorAll('thead th[data-col]').forEach(th => {
+    th.addEventListener('click', () => {
+      const col = th.dataset.col;
+      if (sortCol === col) { sortAsc = !sortAsc; }
+      else { sortCol = col; sortAsc = true; }
+      document.querySelectorAll('thead th').forEach(t => t.classList.remove('sorted'));
+      th.classList.add('sorted');
+      th.querySelector('.sort-arrow').textContent = sortAsc ? '▲' : '▼';
+      render();
+    });
+  });
+
+  searchEl.addEventListener('input', render);
+  filterCollege.addEventListener('change', render);
+  filterYear.addEventListener('change', render);
+
+  // Load data
+  fetch('/projects/durham-great-war-memorial/data/records.json')
+    .then(r => r.json())
+    .then(data => {
+      allRecords = data;
+      buildFilters(data);
+      render();
+    })
+    .catch(() => {
+      tbody.innerHTML = '<tr><td colspan="7" style="padding:24px;text-align:center;color:#999">Could not load data file.</td></tr>';
+    });
+})();
+</script>
+</body>
+</html>
