@@ -1,0 +1,1 @@
+function e(e,t,n){let[r,i,a]=e.split(`-`).map(Number),o=new Date(r,i-1,a);return t&&o.setDate(o.getDate()+6),o>=new Date(n.getFullYear(),n.getMonth(),n.getDate())}export{e as t};
